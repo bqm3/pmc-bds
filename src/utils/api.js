@@ -23,7 +23,11 @@ export const setAuthToken = (token) => {
 
 // Login API
 export const login = async (username, password) => {
-  const response = await api.post('/user/login', { UserName: username, Password: password });
+  const response = await api.post('/user/login', { UserName: username, Password: password }, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
   return response.data; // Expecting the server to return { accessToken: '...' }
 };
 
