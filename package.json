@@ -1,0 +1,43 @@
+{
+    "name": "base-ui-cra",
+    "version": "5.0.0",
+    "private": true,
+    "dependencies": {
+        "@emotion/react": "^11.13.3",
+        "@emotion/styled": "^11.13.0",
+        "@mui/base": "next",
+        "@mui/icons-material": "latest",
+        "@mui/material": "^6.1.5",
+        "@mui/x-data-grid": "^7.22.0",
+        "@types/react": "latest",
+        "@types/react-dom": "latest",
+        "axios": "^1.7.7",
+        "cross-env": "^7.0.3",
+        "react": "latest",
+        "react-dom": "latest",
+        "react-router-dom": "^6.27.0",
+        "react-scripts": "latest",
+        "typescript": "latest"
+    },
+    "scripts": {
+        "start": "cross-env PORT=4000 react-scripts start",
+        "build": "cross-env PORT=4000 react-scripts build",
+        "test": "cross-env PORT=4000 react-scripts test",
+        "eject": " cross-env PORT=4000 react-scripts eject"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@babel/plugin-proposal-private-property-in-object": "latest"
+    }
+}
