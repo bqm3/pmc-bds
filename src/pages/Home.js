@@ -8,6 +8,7 @@ const Home = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(0)
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
