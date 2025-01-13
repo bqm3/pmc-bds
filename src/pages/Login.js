@@ -14,7 +14,11 @@ const Login = () => {
       const data = await login(username, password);
       localStorage.setItem('accessToken', data.token);
       setAuthToken(data.token); // Set token in axios header
-      navigate('/home');
+      if (data.user.isRole != 1){
+        navigate('/home');
+      } else {
+        navigate('/vattu');
+      }
     } catch (error) {
       alert('Login failed. Please check your username and password.');
     }
