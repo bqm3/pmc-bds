@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Base URL for the API (replace with your actual API endpoint)
-const BASE_URL = 'https://api.pmcweb.vn/api/v1'; // replace with your API URL
+const BASE_URL = 'https://api.pmcweb.vn/'; // replace with your API URL
 
 // Create an axios instance
 const api = axios.create({
@@ -23,17 +23,13 @@ export const setAuthToken = (token) => {
 
 // Login API
 export const login = async (username, password) => {
-  const response = await api.post('/user/login', { UserName: username, Password: password }, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  const response = await api.post('api/v1/user/login', { UserName: username, Password: password });
   return response.data; // Expecting the server to return { accessToken: '...' }
 };
 
 // Token validation API
 export const validateToken = async () => {
-  const response = await api.get('/validate-token');
+  const response = await api.get('api/v1/validate-token');
   return response.data; // Expecting the server to return user data or validation status
 };
 
