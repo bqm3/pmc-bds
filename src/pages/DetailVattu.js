@@ -65,7 +65,6 @@ const DetailVattu = () => {
       if (response.data.data.Anh) {
         setImagePreview(`https://api.pmcweb.vn/upload/${response.data.data.Anh}`);
       }
-
       setLoading(false);
     } catch (error) {
       setError("Không thể tải dữ liệu. Vui lòng thử lại.");
