@@ -14,11 +14,11 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
+import axios from "axios";
 
 const Add = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     DM_VatTu: "",
     MaVT: "",
@@ -63,8 +63,7 @@ const Add = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-
+  
     const submitData = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
       submitData.append(key, value);
@@ -77,17 +76,24 @@ const Add = () => {
       await fetch("https://api.pmcweb.vn/api/v1/vattu/create", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-        body: submitData
+          "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+        }
       });
-      navigate("/vattu");
+
+      console.log("response",response)
+  
+      if (response.status == 200) {
+        navigate("/vattu");
+      } else {
+        alert(response.data.message || "Đã có lỗi xảy ra. Vui lòng thử lại.");
+      }
     } catch (err) {
-      setError("Không thể tạo vật tư. Vui lòng thử lại.");
+      alert("Không thể tạo vật tư. Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -96,12 +102,6 @@ const Add = () => {
           <Typography variant="h4" gutterBottom sx={{ mb: 4 }}>
             Tạo Mới Vật Tư
           </Typography>
-
-          {error && (
-            <Alert severity="error" sx={{ mb: 3 }}>
-              {error}
-            </Alert>
-          )}
 
           <Box component="form" onSubmit={handleSubmit} noValidate>
             <Grid container spacing={3}>
