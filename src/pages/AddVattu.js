@@ -73,8 +73,7 @@ const Add = () => {
     }
 
     try {
-      await fetch("https://api.pmcweb.vn/api/v1/vattu/create", {
-        method: "POST",
+      const response = await axios.post("https://api.pmcweb.vn/api/v1/vattu/create", submitData, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
         }
