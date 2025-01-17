@@ -30,6 +30,7 @@ const DetailVattu = () => {
     GhiChu: "",
     Loai: "",
     Anh: "", // Thêm trường Anh vào formData
+    TenHang: "",
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -59,6 +60,7 @@ const DetailVattu = () => {
         GhiChu: response.data.data.GhiChu || "",
         Loai: response.data.data.Loai || "",
         Anh: response.data.data.Anh || "", // Cập nhật trường Anh
+        TenHang: response.data.data.TenHang || ""
       });
 
       // Nếu có ảnh, hiển thị ảnh
@@ -201,11 +203,11 @@ const DetailVattu = () => {
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Loại điều khiển"
+                  label="ControlType"
                   value={formData.ControlType}
                   onChange={handleInputChange("ControlType")}
                   variant="outlined"
-                  placeholder="Nhập loại điều khiển"
+                  placeholder="Nhập ControlType"
                 />
               </Grid>
 
@@ -228,6 +230,17 @@ const DetailVattu = () => {
                   onChange={handleInputChange("Loai")}
                   variant="outlined"
                   placeholder="Nhập loại"
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Hãng"
+                  value={formData.TenHang}
+                  onChange={handleInputChange("TenHang")}
+                  variant="outlined"
+                  placeholder="Nhập tên hãng"
                 />
               </Grid>
 

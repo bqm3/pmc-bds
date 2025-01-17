@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { 
+import React, { useState } from "react";
+import {
   Container,
   Typography,
   TextField,
@@ -10,10 +10,10 @@ import {
   CardContent,
   Alert,
   CircularProgress,
-  IconButton
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import DeleteIcon from '@mui/icons-material/Delete';
+  IconButton,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 
 const Add = () => {
@@ -26,15 +26,16 @@ const Add = () => {
     ControlType: "",
     TuoiThoTB: "",
     GhiChu: "",
-    Loai: ""
+    Loai: "",
+    TenHang: "",
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
   const handleInputChange = (field) => (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: e.target.value
+      [field]: e.target.value,
     }));
   };
 
@@ -54,16 +55,16 @@ const Add = () => {
     setImageFile(null);
     setImagePreview(null);
     // Reset file input
-    const fileInput = document.getElementById('image-upload');
+    const fileInput = document.getElementById("image-upload");
     if (fileInput) {
-      fileInput.value = '';
+      fileInput.value = "";
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
     const submitData = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
       submitData.append(key, value);
@@ -75,12 +76,10 @@ const Add = () => {
     try {
       const response = await axios.post("https://api.pmcweb.vn/api/v1/vattu/create", submitData, {
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
-        }
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
       });
 
-      console.log("response",response)
-  
       if (response.status == 200) {
         navigate("/vattu");
       } else {
@@ -92,7 +91,6 @@ const Add = () => {
       setLoading(false);
     }
   };
-  
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -140,11 +138,11 @@ const Add = () => {
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Loại điều khiển"
+                  label="ControlType"
                   value={formData.ControlType}
                   onChange={handleInputChange("ControlType")}
                   variant="outlined"
-                  placeholder="Nhập loại điều khiển"
+                  placeholder="Nhập ControlType"
                 />
               </Grid>
 
@@ -173,6 +171,17 @@ const Add = () => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
+                  label="Hãng"
+                  value={formData.TenHang}
+                  onChange={handleInputChange("TenHang")}
+                  variant="outlined"
+                  placeholder="Nhập tên hãng"
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
                   label="Ghi chú"
                   value={formData.GhiChu}
                   onChange={handleInputChange("GhiChu")}
@@ -188,21 +197,16 @@ const Add = () => {
                   accept="image/*"
                   type="file"
                   onChange={handleImageChange}
-                  style={{ display: 'none' }}
+                  style={{ display: "none" }}
                   id="image-upload"
                 />
                 <label htmlFor="image-upload">
-                  <Button
-                    variant="outlined"
-                    component="span"
-                    fullWidth
-                    sx={{ height: 56 }}
-                  >
+                  <Button variant="outlined" component="span" fullWidth sx={{ height: 56 }}>
                     Chọn hình ảnh
                   </Button>
                 </label>
                 {imagePreview && (
-                  <Box sx={{ mt: 2, position: 'relative', display: 'inline-block' }}>
+                  <Box sx={{ mt: 2, position: "relative", display: "inline-block" }}>
                     <img
                       src={imagePreview}
                       alt="Preview"
@@ -211,14 +215,14 @@ const Add = () => {
                     <IconButton
                       onClick={handleDeleteImage}
                       sx={{
-                        position: 'absolute',
+                        position: "absolute",
                         top: -12,
                         right: -12,
-                        backgroundColor: 'white',
-                        '&:hover': {
-                          backgroundColor: '#f5f5f5'
+                        backgroundColor: "white",
+                        "&:hover": {
+                          backgroundColor: "#f5f5f5",
                         },
-                        boxShadow: '0px 2px 4px rgba(0,0,0,0.2)'
+                        boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
                       }}
                       size="small"
                     >
@@ -238,12 +242,12 @@ const Add = () => {
                   sx={{ height: 56 }}
                 >
                   {loading ? (
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
                       <CircularProgress size={24} sx={{ mr: 1 }} />
                       Đang xử lý...
                     </Box>
                   ) : (
-                    'Tạo mới vật tư'
+                    "Tạo mới vật tư"
                   )}
                 </Button>
               </Grid>
