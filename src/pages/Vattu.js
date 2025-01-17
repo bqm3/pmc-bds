@@ -284,7 +284,7 @@ const Home = () => {
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 2 }}>
         {/* FormControl */}
-        <FormControl sx={{ width: 200 }}>
+        <FormControl sx={{ width: 200 ,mt: 1 }}>
           <InputLabel>Tên hãng</InputLabel>
           <Select
             multiple
