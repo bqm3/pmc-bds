@@ -29,8 +29,12 @@ export const login = async (username, password) => {
 
 // Token validation API
 export const validateToken = async () => {
-  const response = await api.get('api/v1/validate-token');
-  return response.data; // Expecting the server to return user data or validation status
+  const response = await api.get('api/v1/user/validate-token',{
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
+  });
+  return response.data.data;
 };
 
 export default api;

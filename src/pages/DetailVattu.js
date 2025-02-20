@@ -1,23 +1,13 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Typography,
-  TextField,
-  Button,
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  Alert,
-  CircularProgress,
-  IconButton,
-} from "@mui/material";
+import { Container, Typography, TextField, Button, Box, Grid, Card, CardContent, Alert, CircularProgress, IconButton } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
+import { validateToken } from "../utils/api";
 
 const DetailVattu = () => {
   const { id } = useParams();
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -39,17 +29,23 @@ const DetailVattu = () => {
     fetchData();
   }, [id]);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const fetchedUser = await validateToken();
+      setUser(fetchedUser);
+    };
+
+    fetchUser();
+  }, []);
+
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        `https://api.pmcweb.vn/api/v1/vattu/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-        }
-      );
-      
+      const response = await axios.get(`https://api.pmcweb.vn/api/v1/vattu/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      });
+
       // Cập nhật formData với dữ liệu từ API
       setFormData({
         DM_VatTu: response.data.data.DM_VatTu || "",
@@ -60,7 +56,7 @@ const DetailVattu = () => {
         GhiChu: response.data.data.GhiChu || "",
         Loai: response.data.data.Loai || "",
         Anh: response.data.data.Anh || "", // Cập nhật trường Anh
-        TenHang: response.data.data.TenHang || ""
+        TenHang: response.data.data.TenHang || "",
       });
 
       // Nếu có ảnh, hiển thị ảnh
@@ -125,16 +121,12 @@ const DetailVattu = () => {
     }
 
     try {
-      await axios.put(
-        `https://api.pmcweb.vn/api/v1/vattu/update/${id}`,
-        submitData,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axios.put(`https://api.pmcweb.vn/api/v1/vattu/update/${id}`, submitData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       navigate("/vattu");
     } catch (err) {
       setError("Không thể cập nhật vật tư. Vui lòng thử lại.");
@@ -258,23 +250,17 @@ const DetailVattu = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <input
-                  accept="image/*"
-                  type="file"
-                  onChange={handleImageChange}
-                  style={{ display: "none" }}
-                  id="image-upload"
-                />
-                <label htmlFor="image-upload">
-                  <Button
-                    variant="outlined"
-                    component="span"
-                    fullWidth
-                    sx={{ height: 56 }}
-                  >
-                    {imagePreview ? "Thay đổi hình ảnh" : "Chọn hình ảnh"}
-                  </Button>
-                </label>
+                {user?.isAction == 1 && (
+                  <>
+                    <input accept="image/*" type="file" onChange={handleImageChange} style={{ display: "none" }} id="image-upload" />
+                    <label htmlFor="image-upload">
+                      <Button variant="outlined" component="span" fullWidth sx={{ height: 56 }}>
+                        {imagePreview ? "Thay đổi hình ảnh" : "Chọn hình ảnh"}
+                      </Button>
+                    </label>
+                  </>
+                )}
+
                 {imagePreview && (
                   <Box
                     sx={{
@@ -283,50 +269,43 @@ const DetailVattu = () => {
                       display: "inline-block",
                     }}
                   >
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      style={{ maxWidth: 200, borderRadius: 8 }}
-                    />
-                    <IconButton
-                      onClick={handleDeleteImage}
-                      sx={{
-                        position: "absolute",
-                        top: -12,
-                        right: -12,
-                        backgroundColor: "white",
-                        "&:hover": {
-                          backgroundColor: "#f5f5f5",
-                        },
-                        boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
-                      }}
-                      size="small"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                    <img src={imagePreview} alt="Preview" style={{ maxWidth: 200, borderRadius: 8 }} />
+                    {user?.isAction == 1 && (
+                      <IconButton
+                        onClick={handleDeleteImage}
+                        sx={{
+                          position: "absolute",
+                          top: -12,
+                          right: -12,
+                          backgroundColor: "white",
+                          "&:hover": {
+                            backgroundColor: "#f5f5f5",
+                          },
+                          boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
+                        }}
+                        size="small"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    )}
                   </Box>
                 )}
               </Grid>
 
-              <Grid item xs={12}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  fullWidth
-                  size="large"
-                  disabled={loading}
-                  sx={{ height: 56 }}
-                >
-                  {loading ? (
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <CircularProgress size={24} sx={{ mr: 1 }} />
-                      Đang xử lý...
-                    </Box>
-                  ) : (
-                    "Cập nhật vật tư"
-                  )}
-                </Button>
-              </Grid>
+              {user?.isAction == 1 && (
+                <Grid item xs={12}>
+                  <Button type="submit" variant="contained" fullWidth size="large" disabled={loading} sx={{ height: 56 }}>
+                    {loading ? (
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <CircularProgress size={24} sx={{ mr: 1 }} />
+                        Đang xử lý...
+                      </Box>
+                    ) : (
+                      "Cập nhật vật tư"
+                    )}
+                  </Button>
+                </Grid>
+              )}
             </Grid>
           </Box>
         </CardContent>

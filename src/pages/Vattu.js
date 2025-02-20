@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -22,13 +22,14 @@ import {
 import { DataGrid } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
+import { validateToken } from "../utils/api";
 
 const Home = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [dataHang, setDataHang] = useState([]);
   const [selectHang, setSelectHang] = useState([dataHang]);
-  const [displayData, setDisplayData] = useState([]); 
+  const [displayData, setDisplayData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [file, setFile] = useState(null);
   const [open, setOpen] = useState(false);
@@ -36,7 +37,16 @@ const Home = () => {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [isUploadLoading, setIsUploadLoading] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [user, setUser] = useState(null);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const fetchedUser = await validateToken();
+      setUser(fetchedUser);
+    };
+  
+    fetchUser();
+  }, []);  
 
   useEffect(() => {
     fetchDataTenHang();
@@ -58,18 +68,19 @@ const Home = () => {
 
     // Apply company filter
     if (selectHang?.length > 0 && selectHang?.length < dataHang?.length) {
-      filteredResults = filteredResults.filter(item => selectHang.includes(item?.TenHang));
+      filteredResults = filteredResults.filter((item) => selectHang.includes(item?.TenHang));
     }
 
     // Apply search filter
     if (searchTerm) {
-      filteredResults = filteredResults.filter(item => 
-        item.DM_VatTu?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.MaVT?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.ChungLoai?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.ControlType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.TuoiThoTB?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.Loai?.toLowerCase().includes(searchTerm.toLowerCase())
+      filteredResults = filteredResults.filter(
+        (item) =>
+          item.DM_VatTu?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.MaVT?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.ChungLoai?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.ControlType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.TuoiThoTB?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.Loai?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -78,17 +89,16 @@ const Home = () => {
 
   const handleFilterHang = (event) => {
     const { value } = event.target;
-    
+
     // Handle "Select All" case
     if (value.includes("all")) {
       setSelectHang(selectHang?.length === dataHang?.length ? [] : dataHang);
       return;
     }
-    
+
     setSelectHang(value);
   };
 
-  
   // useEffect(() => {
   //   const timeoutId = setTimeout(() => {
   //     fetchData(searchTerm);
@@ -257,26 +267,19 @@ const Home = () => {
         <Typography variant="h4" gutterBottom>
           PMC Vật tư
         </Typography>
+
         <Box sx={{ mb: 2 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ width: "120px", height: "100%" }}
-            onClick={() => navigate(`/newVattu`)}
-            sx={{ mr: 2 }}
-          >
-            Thêm mới
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ width: "150px", height: "100%" }}
-            onClick={() => setOpen(true)}
-            sx={{ mr: 2 }}
-            disabled={isUploadLoading}
-          >
-            {isUploadLoading ? <CircularProgress size={24} /> : "Upload File"}
-          </Button>
+          {user?.isAction == 1 && (
+            <>
+              <Button variant="contained" color="primary" style={{ width: "120px", height: "100%" }} onClick={() => navigate(`/newVattu`)} sx={{ mr: 2 }}>
+                Thêm mới
+              </Button>
+              <Button variant="contained" color="primary" style={{ width: "150px", height: "100%" }} onClick={() => setOpen(true)} sx={{ mr: 2 }} disabled={isUploadLoading}>
+                {isUploadLoading ? <CircularProgress size={24} /> : "Upload File"}
+              </Button>
+            </>
+          )}
+
           <Button variant="contained" color="error" onClick={handleLogout}>
             Đăng xuất
           </Button>
@@ -284,7 +287,7 @@ const Home = () => {
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 2 }}>
         {/* FormControl */}
-        <FormControl sx={{ width: 200 ,mt: 1 }}>
+        <FormControl sx={{ width: 200, mt: 1 }}>
           <InputLabel>Tên hãng</InputLabel>
           <Select
             multiple
@@ -300,10 +303,7 @@ const Home = () => {
             }}
           >
             <MenuItem value="all">
-              <Checkbox 
-                checked={dataHang?.length > 0 && selectHang?.length === dataHang?.length}
-                indeterminate={selectHang?.length > 0 && selectHang?.length < dataHang?.length}
-              />
+              <Checkbox checked={dataHang?.length > 0 && selectHang?.length === dataHang?.length} indeterminate={selectHang?.length > 0 && selectHang?.length < dataHang?.length} />
               Tất cả
             </MenuItem>
             {dataHang?.map((hang, index) => (
@@ -328,13 +328,7 @@ const Home = () => {
       </Box>
 
       <Box sx={{ height: 700, width: "100%", mt: 1 }}>
-        <DataGrid
-          rows={displayData}
-          columns={columns}
-          pagination={false}
-          onRowClick={handleRowClick}
-          getRowId={(row) => row.ID_VatTu}
-        />
+        <DataGrid rows={displayData} columns={columns} pagination={false} onRowClick={handleRowClick} getRowId={(row) => row.ID_VatTu} />
       </Box>
 
       {/* Upload File Dialog */}
@@ -365,11 +359,7 @@ const Home = () => {
           <DialogContentText>Bạn có chắc chắn muốn xóa mục này không?</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() => handleDelete(itemToDelete)}
-            color="primary"
-            disabled={isDeleteLoading}
-          >
+          <Button onClick={() => handleDelete(itemToDelete)} color="primary" disabled={isDeleteLoading}>
             {isDeleteLoading ? <CircularProgress size={24} /> : "Xóa"}
           </Button>
           <Button onClick={() => closeDeleteDialog()} color="secondary">
