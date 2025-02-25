@@ -41,10 +41,10 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/detail/:id" element={<Detail />} /> {/* Thêm route cho trang chi tiết */}
-        <Route path="/detail-vattu/:id" element={<DetailVattu />} /> {/* Thêm route cho trang chi tiết */}
-        <Route path="/new" element={<Add />} /> {/* Thêm route cho trang chi tiết */}
-        <Route path="/newVattu" element={<AddVattu />} /> {/* Thêm route cho trang chi tiết */}
+        <Route path="/detail/:id" element={ <ProtectedRoute><Detail /></ProtectedRoute>} /> {/* Thêm route cho trang chi tiết */}
+        <Route path="/detail-vattu/:id" element={<ProtectedRoute><DetailVattu /></ProtectedRoute>} /> {/* Thêm route cho trang chi tiết */}
+        <Route path="/new" element={<ProtectedRoute><Add /></ProtectedRoute>} /> {/* Thêm route cho trang chi tiết */}
+        <Route path="/newVattu" element={ <ProtectedRoute><AddVattu /></ProtectedRoute>} /> {/* Thêm route cho trang chi tiết */}
       </Routes>
     </Router>
   );
