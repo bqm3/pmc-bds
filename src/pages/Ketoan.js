@@ -85,7 +85,18 @@ const Home = () => {
       fetchData(); // Làm mới dữ liệu sau khi upload
       alert("Tải tệp lên thành công");
     } catch (error) {
-      alert(`Lỗi khi tải tệp lên: ${error}`);
+      // Kiểm tra lỗi từ phản hồi server
+      if (error.response) {
+        // Lỗi từ server (như 400, 500)
+        const errorMessage = error.response.data.message || "Lỗi không xác định từ server";
+        alert(`Lỗi khi tải tệp lên: ${errorMessage}`);
+      } else if (error.request) {
+        // Lỗi không nhận được phản hồi (network error)
+        alert("Lỗi khi tải tệp lên: Không thể kết nối đến server");
+      } else {
+        // Lỗi khác (cấu hình axios, v.v.)
+        alert(`Lỗi khi tải tệp lên: ${error.message}`);
+      }
     } finally {
       setIsUploadLoading(false);
     }
