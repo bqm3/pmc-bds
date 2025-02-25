@@ -20,10 +20,13 @@ const Login = () => {
       await localStorage.setItem('accessToken', data?.data?.token);
       setLoading(false)
       setAuthToken(data?.data.token); 
-      if (data?.data?.user?.isRole !== 1){
-        navigate('/home');
-      } else {
+      if (data?.data?.user?.isRole === 1){
         navigate('/vattu');
+        // navigate('/home');
+      } else if ((data?.data?.user?.isRole === 2)){
+        navigate('/ketoan'); 
+      } else {
+        navigate('/home');
       }
     } catch (error) {
       setLoading(false)
